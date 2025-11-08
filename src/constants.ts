@@ -5,7 +5,7 @@ export interface Coordinate {
   y: number;
 }
 
-// Normall game size for this game.
+// Normall gameboard size for this game.
 export const GAME_SIZE: Coordinate = { x: 10, y: 20 };
 
 export interface LayoutMetrics {
@@ -53,8 +53,7 @@ export const DELAYS: Delays = {
 
 export const SCORE_RULES = {
   addOnDrop: (): number => 10,
-  addOnRemovedLines: (lineCount: number): number =>
-    100 * Math.pow(2, lineCount - 1),
+  addOnRemovedLines: (lineCount: number): number => 100 * Math.pow(2, lineCount - 1),
 } as const;
 
 // Tetromino --------------------------------------
@@ -79,13 +78,7 @@ export class TetrominoShape {
   colorIndex: TetrominoColorKey;
   color: string;
 
-  constructor(
-    size: number,
-    blocks: number[],
-    shiftsX: number[],
-    shiftsY: number[],
-    colorIndex: TetrominoColorKey
-  ) {
+  constructor(size: number, blocks: number[], shiftsX: number[], shiftsY: number[], colorIndex: TetrominoColorKey) {
     this.size = size;
     this.blocks = blocks;
     this.shiftsX = shiftsX;
@@ -96,55 +89,13 @@ export class TetrominoShape {
 }
 
 export const TETROMINO_SHAPES: TetrominoShape[] = [
-  new TetrominoShape(
-    4,
-    [0x0f00, 0x2222, 0x00f0, 0x4444],
-    [0, 2, 0, 1],
-    [0, 4, 0, 4],
-    'I'
-  ),
-  new TetrominoShape(
-    3,
-    [0x0e20, 0x44c0, 0x8e00, 0x6440],
-    [2, 1, 0, 1],
-    [2, 2, 2, 2],
-    'J'
-  ),
-  new TetrominoShape(
-    3,
-    [0x0e80, 0xc440, 0x2e00, 0x4460],
-    [0, 1, 2, 1],
-    [2, 2, 2, 2],
-    'L'
-  ),
-  new TetrominoShape(
-    2,
-    [0xcc00, 0xcc00, 0xcc00, 0xcc00],
-    [0, 0, 0, 0],
-    [1, 1, 1, 1],
-    'O'
-  ),
-  new TetrominoShape(
-    3,
-    [0x06c0, 0x8c40, 0x6c00, 0x4620],
-    [1, 1, 1, 2],
-    [2, 2, 2, 2],
-    'S'
-  ),
-  new TetrominoShape(
-    3,
-    [0x0e40, 0x4c40, 0x4e00, 0x4640],
-    [1, 1, 1, 1],
-    [2, 2, 2, 2],
-    'T'
-  ),
-  new TetrominoShape(
-    3,
-    [0x0c60, 0x4c80, 0xc600, 0x2640],
-    [1, 0, 1, 1],
-    [2, 2, 2, 2],
-    'Z'
-  ),
+  new TetrominoShape(4, [0x0f00, 0x2222, 0x00f0, 0x4444], [0, 2, 0, 1], [0, 4, 0, 4], 'I'),
+  new TetrominoShape(3, [0x0e20, 0x44c0, 0x8e00, 0x6440], [2, 1, 0, 1], [2, 2, 2, 2], 'J'),
+  new TetrominoShape(3, [0x0e80, 0xc440, 0x2e00, 0x4460], [0, 1, 2, 1], [2, 2, 2, 2], 'L'),
+  new TetrominoShape(2, [0xcc00, 0xcc00, 0xcc00, 0xcc00], [0, 0, 0, 0], [1, 1, 1, 1], 'O'),
+  new TetrominoShape(3, [0x06c0, 0x8c40, 0x6c00, 0x4620], [1, 1, 1, 2], [2, 2, 2, 2], 'S'),
+  new TetrominoShape(3, [0x0e40, 0x4c40, 0x4e00, 0x4640], [1, 1, 1, 1], [2, 2, 2, 2], 'T'),
+  new TetrominoShape(3, [0x0c60, 0x4c80, 0xc600, 0x2640], [1, 0, 1, 1], [2, 2, 2, 2], 'Z'),
 ];
 
 export enum GAME_STATES {

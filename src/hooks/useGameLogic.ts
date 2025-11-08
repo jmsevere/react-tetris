@@ -36,7 +36,7 @@ export interface GameLogic {
   durationRef: MutableRefObject<number>;
 }
 
-// Optimization 1: Custom shallow clone for BlockGrid
+// Shallow clone for BlockGrid
 function cloneBlockGrid(grid: BlockGrid): BlockGrid {
   const newGrid: BlockGrid = [];
   for (let x = 0; x < grid.length; x++) {
@@ -63,14 +63,8 @@ type GameAction =
   | { type: 'SET_CURRENT'; payload: Tetromino | null }
   | { type: 'SET_NEXT'; payload: Tetromino | null }
   | { type: 'ADD_SCORE'; payload: number }
-  | {
-      type: 'PLACE_TETROMINO';
-      payload: { tetromino: Tetromino; removedLines: number };
-    }
-  | {
-      type: 'SPAWN_NEXT_PIECE';
-      payload: { current: Tetromino | null; next: Tetromino };
-    }
+  | { type: 'PLACE_TETROMINO'; payload: { tetromino: Tetromino; removedLines: number } }
+  | { type: 'SPAWN_NEXT_PIECE'; payload: { current: Tetromino | null; next: Tetromino } }
   | { type: 'RESET'; payload: { current: Tetromino; next: Tetromino } };
 
 function gameReducer(state: GameState, action: GameAction): GameState {
@@ -88,7 +82,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return { ...state, score: state.score + action.payload };
 
     case 'PLACE_TETROMINO': {
-      const { tetromino } = action.payload;
+      const { tetromino, removedLines } = action.payload;
       const newBlocks = cloneBlockGrid(state.blocks);
 
       tetromino.all((x: number, y: number) => {
@@ -96,16 +90,11 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         newBlocks[x][y] = tetromino.shape;
       });
 
-      const { newBlocks: processedBlocks, removedLines: actualRemoved } =
-        removeCompletedLines(newBlocks);
+      const { newBlocks: processedBlocks, removedLines: actualRemoved } = removeCompletedLines(newBlocks);
 
       const newRows = state.rows + actualRemoved;
-      const newDelay = Math.max(
-        DELAYS.min,
-        DELAYS.start - DELAYS.decrement * newRows
-      );
-      const lineScore =
-        actualRemoved > 0 ? SCORE_RULES.addOnRemovedLines(actualRemoved) : 0;
+      const newDelay = Math.max(DELAYS.min, DELAYS.start - DELAYS.decrement * newRows);
+      const lineScore = actualRemoved > 0 ? SCORE_RULES.addOnRemovedLines(actualRemoved) : 0;
 
       return {
         ...state,
@@ -140,10 +129,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 }
 
 // Extract line removal logic to avoid duplication
-function removeCompletedLines(blocks: BlockGrid): {
-  newBlocks: BlockGrid;
-  removedLines: number;
-} {
+function removeCompletedLines(blocks: BlockGrid): { newBlocks: BlockGrid; removedLines: number } {
   const newBlocks = blocks;
   let removedLines = 0;
 
@@ -187,49 +173,31 @@ export function useGameLogic(): GameLogic {
   const durationRef = useRef<number>(0);
 
   const randomTetromino = useCallback((): Tetromino => {
-    const chosen =
-      TETROMINO_SHAPES[getRandomInt(0, TETROMINO_SHAPES.length - 1)];
+    const chosen = TETROMINO_SHAPES[getRandomInt(0, TETROMINO_SHAPES.length - 1)];
     const color = TETROMINO_COLORS[chosen.colorIndex];
-    return new Tetromino(
-      chosen,
-      getRandomInt(0, GAME_SIZE.x - chosen.size),
-      0,
-      0,
-      color
-    );
+    return new Tetromino(chosen, getRandomInt(0, GAME_SIZE.x - chosen.size), 0, 0, color);
   }, []);
 
   const getBlock = useCallback(
     (x: number, y: number, blockArray: BlockGrid = state.blocks): Block => {
       return blockArray?.[x]?.[y] || null;
     },
-    [state.blocks]
+    [state.blocks],
   );
 
   const willHitObstacle = useCallback(
-    (
-      tetromino: Tetromino,
-      x0: number,
-      y0: number,
-      orientation: number
-    ): boolean => {
+    (tetromino: Tetromino, x0: number, y0: number, orientation: number): boolean => {
       return tetromino.first(
         x0,
         y0,
         orientation,
         (x: number, y: number) => {
-          return (
-            x < 0 ||
-            x >= GAME_SIZE.x ||
-            y < 0 ||
-            y >= GAME_SIZE.y ||
-            !!getBlock(x, y)
-          );
+          return x < 0 || x >= GAME_SIZE.x || y < 0 || y >= GAME_SIZE.y || !!getBlock(x, y);
         },
-        true
+        true,
       );
     },
-    [getBlock]
+    [getBlock],
   );
 
   const move = useCallback(
@@ -251,19 +219,13 @@ export function useGameLogic(): GameLogic {
       }
 
       if (!willHitObstacle(state.current, x, y, state.current.orientation)) {
-        const updated = new Tetromino(
-          state.current.shape,
-          x,
-          y,
-          state.current.orientation,
-          state.current.shape.color
-        );
+        const updated = new Tetromino(state.current.shape, x, y, state.current.orientation, state.current.shape.color);
         dispatch({ type: 'SET_CURRENT', payload: updated });
         return true;
       }
       return false;
     },
-    [state.current, willHitObstacle]
+    [state.current, willHitObstacle],
   );
 
   const rotate = useCallback(
@@ -278,59 +240,58 @@ export function useGameLogic(): GameLogic {
         ? 0
         : state.current.orientation + 1;
 
-      if (
-        willHitObstacle(
-          state.current,
-          state.current.x,
-          state.current.y,
-          newOrientation
-        )
-      )
-        return;
+      if (willHitObstacle(state.current, state.current.x, state.current.y, newOrientation)) return;
 
       const updated = new Tetromino(
         state.current.shape,
         state.current.x,
         state.current.y,
         newOrientation,
-        state.current.shape.color
+        state.current.shape.color,
       );
       dispatch({ type: 'SET_CURRENT', payload: updated });
     },
-    [state.current, willHitObstacle]
+    [state.current, willHitObstacle],
   );
 
   const dropTetrominoAndRemoveLines = useCallback((): void => {
     if (!state.current) return;
+    dispatch({ type: 'PLACE_TETROMINO', payload: { tetromino: state.current, removedLines: 0 } });
   }, [state.current]);
 
   const drop = useCallback(
     (updateScore: boolean): boolean => {
-      console.log(updateScore);
+      if (!move(ACTIONS.DOWN)) {
+        if (updateScore) {
+          dispatch({ type: 'ADD_SCORE', payload: SCORE_RULES.addOnDrop() });
+        }
+        dropTetrominoAndRemoveLines();
+
+        const newCurrent = state.next;
+        const newNext = randomTetromino();
+
+        dispatch({ type: 'SPAWN_NEXT_PIECE', payload: { current: newCurrent, next: newNext } });
+        queueRef.current = [];
+
+        if (newCurrent && willHitObstacle(newCurrent, newCurrent.x, newCurrent.y, newCurrent.orientation)) {
+          dispatch({ type: 'SET_GAME_STATE', payload: GAME_STATES.CANCELLED });
+          return false;
+        }
+        return true;
+      }
       return false;
     },
-    [
-      move,
-      dropTetrominoAndRemoveLines,
-      state.next,
-      randomTetromino,
-      willHitObstacle,
-    ]
+    [move, dropTetrominoAndRemoveLines, state.next, randomTetromino, willHitObstacle],
   );
 
   const dropDown = useCallback((): void => {
     if (!state.current) return;
 
-    // Optimization 2: Memoize willHitObstacle results during calculation
+    // Memoize willHitObstacle results during calculation
     let newY = state.current.y;
     let canMove = true;
     while (canMove) {
-      canMove = !willHitObstacle(
-        state.current,
-        state.current.x,
-        newY + 1,
-        state.current.orientation
-      );
+      canMove = !willHitObstacle(state.current, state.current.x, newY + 1, state.current.orientation);
       if (canMove) newY++;
     }
 
@@ -339,33 +300,19 @@ export function useGameLogic(): GameLogic {
       state.current.x,
       newY,
       state.current.orientation,
-      state.current.shape.color
+      state.current.shape.color,
     );
 
     dispatch({ type: 'ADD_SCORE', payload: SCORE_RULES.addOnDrop() });
-    dispatch({
-      type: 'PLACE_TETROMINO',
-      payload: { tetromino: droppedTetromino, removedLines: 0 },
-    });
+    dispatch({ type: 'PLACE_TETROMINO', payload: { tetromino: droppedTetromino, removedLines: 0 } });
 
     const newCurrent = state.next;
     const newNext = randomTetromino();
 
-    dispatch({
-      type: 'SPAWN_NEXT_PIECE',
-      payload: { current: newCurrent, next: newNext },
-    });
+    dispatch({ type: 'SPAWN_NEXT_PIECE', payload: { current: newCurrent, next: newNext } });
     queueRef.current = [];
 
-    if (
-      newCurrent &&
-      willHitObstacle(
-        newCurrent,
-        newCurrent.x,
-        newCurrent.y,
-        newCurrent.orientation
-      )
-    ) {
+    if (newCurrent && willHitObstacle(newCurrent, newCurrent.x, newCurrent.y, newCurrent.orientation)) {
       dispatch({ type: 'SET_GAME_STATE', payload: GAME_STATES.CANCELLED });
     }
   }, [state.current, state.next, willHitObstacle, randomTetromino]);
@@ -416,7 +363,7 @@ export function useGameLogic(): GameLogic {
           break;
       }
     },
-    [move, rotate, dropDown]
+    [move, rotate, dropDown],
   );
 
   const autoDrop = useCallback((): void => {
