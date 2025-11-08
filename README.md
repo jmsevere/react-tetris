@@ -1,5 +1,7 @@
 # react-tetris
 
+IN PROGRESS --- INCOMPLETE
+
 A modern React implementation of the classic Tetris game.
 
 I thought of doing this project for fun while watching the 2023 Tetris movie on Apple TV+
