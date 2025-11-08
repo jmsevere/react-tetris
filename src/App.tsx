@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { GameBoard } from './components/GameBoard';
+import { GameInfo } from './components/GameInfo';
 import { KEYS, ACTIONS, GAME_STATES } from './constants';
 import { useGameLogic } from './hooks/useGameLogic';
 
@@ -15,6 +16,8 @@ function App() {
     startContinue,
     handle,
     autoDrop,
+    score,
+    rows,
     delay,
     queueRef,
     durationRef,
@@ -136,7 +139,8 @@ function App() {
       <main>
         <div className="game" onClick={handleClick}>
           <div className="left">
-            <div className="next-piece"></div>
+            <div className="next-piece">Next-piece</div>
+            <GameInfo score={score} rows={rows} gameState={gameState} />
           </div>
           <div className="right">
             <GameBoard

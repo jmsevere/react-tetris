@@ -1,4 +1,4 @@
-export const VERSION = '5.0.1';
+export const VERSION = '8.0.1';
 
 export interface Coordinate {
   x: number;

@@ -1,0 +1,24 @@
+.statsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem; /* space between rows */
+}
+
+.textCenter {
+  text-align: center;
+  margin: 0;
+}
+
+.valueHighlight {
+  font-style: normal;
+  font-weight: bold;
+}
+
+.valueRed {
+  color: red;
+}
+
+.valueGreen {
+  color: darkgreen;
+}
