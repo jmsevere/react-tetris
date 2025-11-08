@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { GameBoard } from './components/GameBoard';
+import { UpcomingPiece } from './components/UpcomingPiece';
 import { GameInfo } from './components/GameInfo';
 import { KEYS, ACTIONS, GAME_STATES } from './constants';
 import { useGameLogic } from './hooks/useGameLogic';
@@ -12,6 +13,7 @@ function App() {
     gameState,
     blocks,
     current,
+    next,
     pause,
     startContinue,
     handle,
@@ -52,9 +54,7 @@ function App() {
             handled = true;
             break;
           case KEYS.rotate:
-            queueRef.current.push(
-              event.ctrlKey ? ACTIONS.ROTATE_LEFT : ACTIONS.ROTATE_RIGHT
-            );
+            queueRef.current.push(event.ctrlKey ? ACTIONS.ROTATE_LEFT : ACTIONS.ROTATE_RIGHT);
             handled = true;
             break;
           case KEYS.down:
@@ -139,16 +139,13 @@ function App() {
       <main>
         <div className="game" onClick={handleClick}>
           <div className="left">
-            <div className="next-piece">Next-piece</div>
+            <div className="next-piece">
+              <UpcomingPiece next={next} gameState={gameState} blockSize={blockSize} />
+            </div>
             <GameInfo score={score} rows={rows} gameState={gameState} />
           </div>
           <div className="right">
-            <GameBoard
-              blocks={blocks}
-              current={current}
-              gameState={gameState}
-              blockSize={blockSize}
-            />
+            <GameBoard blocks={blocks} current={current} gameState={gameState} blockSize={blockSize} />
           </div>
         </div>
       </main>
