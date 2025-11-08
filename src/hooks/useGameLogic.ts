@@ -88,7 +88,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return { ...state, score: state.score + action.payload };
 
     case 'PLACE_TETROMINO': {
-      const { tetromino, removedLines } = action.payload;
+      const { tetromino } = action.payload;
       const newBlocks = cloneBlockGrid(state.blocks);
 
       tetromino.all((x: number, y: number) => {

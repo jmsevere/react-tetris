@@ -23,6 +23,18 @@ function App() {
   const prevTimeRef = useRef<number | null>(null);
 
   useEffect(() => {
+    const handleResize = () => {
+      const verticalSize = window.innerHeight - 160;
+      const newBlockSize = Math.floor(verticalSize / 20);
+      setBlockSize(newBlockSize);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (gameState === GAME_STATES.PLAYING) {
         let handled = false;
