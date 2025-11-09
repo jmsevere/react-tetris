@@ -95,14 +95,5 @@ export function UpcomingPiece({ next, gameState, blockSize }: UpcomingPieceProps
 
   const size = LAYOUT_METRICS.upcomingPreviewSize * blockSize;
 
-  // ToDo:make styles for this
-  return (
-    <canvas
-      ref={canvasRef}
-      width={size}
-      height={size}
-      style={{ backgroundColor: 'Lavender', outline: 'solid black thin' }}
-      title="Next tetromino"
-    />
-  );
+  return <canvas ref={canvasRef} width={size} height={size} className="next-piece-canvas" title="Next tetromino" />;
 }

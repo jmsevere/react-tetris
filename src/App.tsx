@@ -43,7 +43,7 @@ function App() {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (gameState === GAME_STATES.PLAYING) {
         let handled = false;
-        console.log('key down', event.key);
+
         switch (event.key) {
           case KEYS.left:
             queueRef.current.push(ACTIONS.LEFT);
@@ -142,7 +142,7 @@ function App() {
             <div className="next-piece">
               <UpcomingPiece next={next} gameState={gameState} blockSize={blockSize} />
             </div>
-            <GameInfo score={score} rows={rows} gameState={gameState} />
+            <GameInfo score={score} rows={rows} gameState={gameState} delay={delay} />
           </div>
           <div className="right">
             <GameBoard blocks={blocks} current={current} gameState={gameState} blockSize={blockSize} />

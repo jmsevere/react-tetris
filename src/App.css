@@ -66,6 +66,11 @@ main {
   width: 100%;
 }
 
+.next-piece-canvas {
+  background-color: #f8f2fd;
+  outline: 'solid black thin';
+}
+
 .game {
   display: flex;
   flex-flow: row;

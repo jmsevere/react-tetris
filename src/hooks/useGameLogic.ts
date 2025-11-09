@@ -227,7 +227,7 @@ export function useGameLogic(): GameLogic {
     },
     [state.current, willHitObstacle],
   );
-
+  // ToDo: review this to see if it can be better with the hitObstacle
   const rotate = useCallback(
     (left: boolean): void => {
       if (!state.current) return;
