@@ -4,11 +4,10 @@ import StatsDisplay from '@/components/StatsDisplay/StatsDisplay';
 interface GameInfoProps {
   score: number;
   rows: number;
-  delay: number;
   gameState: GAME_STATES;
 }
 
-export function GameInfo({ score, rows, delay, gameState }: GameInfoProps) {
+export function GameInfo({ score, rows, gameState }: GameInfoProps) {
   const isPaused = gameState === GAME_STATES.PAUSED;
   const isPlaying = gameState === GAME_STATES.PLAYING;
 
@@ -27,7 +26,7 @@ export function GameInfo({ score, rows, delay, gameState }: GameInfoProps) {
         <br />
         {isPaused && <p style={{ textAlign: 'center' }}>Paused</p>}
       </div>
-      <StatsDisplay score={score} rows={rows} delay={delay} />
+      <StatsDisplay score={score} rows={rows} />
     </div>
   );
 }

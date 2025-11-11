@@ -14,13 +14,14 @@ function App() {
     blocks,
     current,
     next,
-    pause,
-    startContinue,
-    handle,
-    autoDrop,
     score,
     rows,
     delay,
+    startContinue,
+    pause,
+    cancel,
+    handle,
+    autoDrop,
     queueRef,
     durationRef,
   } = useGameLogic();
@@ -67,6 +68,7 @@ function App() {
             handled = true;
             break;
           case KEYS.cancel:
+            cancel();
             handled = true;
             break;
           case KEYS.start:
@@ -87,26 +89,25 @@ function App() {
 
   // Defines and manages an animation/game loop (the tick)
   // Using requestAnimationFrame.
+
   useEffect(() => {
     let animationId: number;
+    prevTimeRef.current = null; // ← CRITICAL: Reset on every effect restart
 
-    // requestAnimationFrame call frame about 60x a sec.
     const frame = (timestamp: number) => {
       if (gameState === GAME_STATES.PLAYING) {
         if (prevTimeRef.current !== null) {
-          // time passed
           const deltaTime = (timestamp - prevTimeRef.current) / 1000;
-          // one queued action per frame
+
           const action = queueRef.current.shift();
           if (action !== undefined) {
             try {
-              console.log(action);
               handle(action);
             } catch (error) {
               console.error('Error handling action:', error);
             }
           }
-          // Auto-drop timer logic
+
           durationRef.current += deltaTime;
           if (durationRef.current > delay) {
             durationRef.current -= delay;
@@ -117,15 +118,19 @@ function App() {
             }
           }
         }
-        // store time for next frame
         prevTimeRef.current = timestamp;
+        animationId = requestAnimationFrame(frame);
       }
-      animationId = requestAnimationFrame(frame);
     };
 
-    animationId = requestAnimationFrame(frame);
+    if (gameState === GAME_STATES.PLAYING) {
+      animationId = requestAnimationFrame(frame);
+    }
+
     return () => cancelAnimationFrame(animationId);
-  }, [gameState, delay, handle, autoDrop, queueRef, durationRef]);
+  }, [gameState, delay, autoDrop]);
+  // took these out to help solve bug using useEffect with these dependencies
+  // }, [gameState, delay, handle, autoDrop, queueRef, durationRef]);
 
   const handleClick = () => {
     if (gameState === GAME_STATES.PLAYING) {
@@ -136,19 +141,21 @@ function App() {
   };
   return (
     <div className="app">
-      <main>
-        <div className="game" onClick={handleClick}>
-          <div className="left">
-            <div className="next-piece">
-              <UpcomingPiece next={next} gameState={gameState} blockSize={blockSize} />
+      <div className="room237">
+        <main>
+          <div className="game" onClick={handleClick}>
+            <div className="left">
+              <div className="next-piece">
+                <UpcomingPiece next={next} gameState={gameState} blockSize={blockSize} />
+              </div>
+              <GameInfo score={score} rows={rows} gameState={gameState} />
             </div>
-            <GameInfo score={score} rows={rows} gameState={gameState} delay={delay} />
+            <div className="right">
+              <GameBoard blocks={blocks} current={current} gameState={gameState} blockSize={blockSize} />
+            </div>
           </div>
-          <div className="right">
-            <GameBoard blocks={blocks} current={current} gameState={gameState} blockSize={blockSize} />
-          </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

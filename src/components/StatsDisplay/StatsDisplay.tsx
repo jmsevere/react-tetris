@@ -4,12 +4,11 @@ import styles from './StatsDisplay.module.css';
 interface StatsDisplayProps {
   score: number | string;
   rows: number | string;
-  delay: number | string;
 }
 
-const StatsDisplay: React.FC<StatsDisplayProps> = ({ score, rows, delay }) => {
-  let calculatedValue = (delay as number) * 100;
-  let displayDelay = parseFloat(calculatedValue.toFixed(1));
+const StatsDisplay: React.FC<StatsDisplayProps> = ({ score, rows }) => {
+  // let calculatedValue = (delay as number) * 100;
+  // let displayDelay = parseFloat(calculatedValue.toFixed(1));
   return (
     <div className={styles.statsContainer}>
       <p className={styles.textCenter}>

@@ -98,3 +98,17 @@ main {
   white-space: nowrap;
   padding: 24px;
 }
+
+.room237 {
+  height: 100vh;
+  width: 100vw;
+  background-image:
+    linear-gradient(to bottom, black 0%, transparent 100%),
+    url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 340 490' opacity='0.4'><polygon fill='%238C1A1E' points='229.9,208.7 170.5,243 111,208.7 111,140 170.5,105.7 229.9,140 '/><polygon fill='%238C1A1E' points='0,305.3 59.5,339.6 59.5,408.3 0,442.6 '/><polygon fill='%238C1A1E' points='342.8,442.6 283.3,408.3 283.3,339.6 342.8,305.3 '/><polygon fill='%23D05427' points='91.6,0 0,52.9 0,0 '/><polygon fill='%23D05427' points='340.6,0 340.6,52.9 248.8,0 '/><polygon fill='%23D05427' points='21.4,264.6 102.8,311.6 102.8,431.7 -1.2,491.8 0,544.5 149.7,458.1 149.1,285.1 68.2,236.7 68.2,116.6 172.2,56.5 276.2,116.6 276.2,236.7 192.5,285 192.5,337.1 192.5,337.1 192.5,458.1 342.2,544.5 341,491.8 237,431.7 237,311.6 320.8,263.3 320.8,90.2 171.1,3.8 21.4,90.2 '/></svg>");
+  background-size:
+    100% 100%,
+    167.3px 241px;
+  background-repeat:
+    no-repeat,
+    repeat;
+}
